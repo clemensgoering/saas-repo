@@ -2,9 +2,44 @@
 "use client"
 
 import ThemeToggler from "../system/ThemeToggler"
+import { ChevronDownIcon, User } from 'lucide-react'
 import Link from "next/link"
 import { useSession } from "@supabase/auth-helpers-react"
 import { supabase } from "../../../supabase/supabase"
+import { useRouter } from "next/navigation"
+
+
+function UserResumeDropDown() {
+  const router = useRouter()
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const path = e.target.value
+    if (path) {
+      router.push(path)
+    }
+  }
+
+  return (
+    <div className="flex">
+      <div className="grid grid-cols-1">
+        <select
+          onChange={handleChange}
+          id="resumeSelection"
+          name="resumeSelection"
+          className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+        >
+          <option value="/member/resume/upload">Upload</option>
+          <option value="/member/resume/overview">Overview</option>
+        </select>
+        <ChevronDownIcon
+          aria-hidden="true"
+          className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+        />
+      </div>
+    </div>
+  )
+}
+
+
 
 export default function Navbar() {
   const session = useSession()
@@ -52,18 +87,13 @@ export default function Navbar() {
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {session ? (
                 <>
-                  <Link href="/member/dashboard" className="text-sm hover:underline text-muted-foreground">
-                    Dashboard
-                  </Link>
-                  <Link href="/member/resume/upload" className="text-sm hover:underline text-muted-foreground">
-                    Resume
-                  </Link>
-                  <Link href="/member/settings" className="text-sm hover:underline text-muted-foreground">
+                  <UserResumeDropDown />
+                  <Link href="/member/settings" className="rounded-full py-2.5 text-sm font-medium">
                     Settings
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="text-sm text-muted-foreground hover:underline"
+                    className="rounded-full bg-teal-600 px-5 py-1.5 text-sm font-medium text-white shadow-sm dark:hover:bg-teal-500e"
                   >
                     Logout
                   </button>

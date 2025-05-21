@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
 import { supabaseServer } from "@supabase/server"
-import { createServerClient } from "@supabase/ssr"
-import { createClient } from "@supabase/supabase-js"
-import { writeFile } from "fs/promises"
-import path from "path"
 import { v4 as uuid } from "uuid"
 //import * as pdfParse from "pdf-parse" // optional später
 
@@ -25,22 +21,30 @@ export async function POST(req: NextRequest) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer())
-  const filename = `${uuid()}.pdf`
-  const uploadPath = path.join(process.cwd(), "uploads", filename)
-
-  // Lokales Speichern (Demo-Zweck – optional in S3/Supabase Storage)
-  await writeFile(uploadPath, buffer)
-
+  const file_id = uuid()
   // OPTIONAL: Text extrahieren via pdf-parse
   // const text = (await pdfParse(buffer)).text
 
   // Speichern in DB (z. B. Tabelle "resumes")
-  await supabase.from("resumes").insert({
+  const { error } = await supabase.from("Resumes").insert({
     user_id: user.id,
-    file_name: filename,
-    uploaded_at: new Date().toISOString(),
+    file_id: file_id,
+    file_name: file.name,
+    created_at: new Date().toISOString(),
     // raw_text: text, // optional
   })
+
+  if(error){
+     return NextResponse.json({ success: false })
+  }
+
+  await supabase
+    .storage
+    .from('resumes')
+    .upload(file_id, file, {
+      cacheControl: '3600',
+      upsert: false
+    })
 
   return NextResponse.json({ success: true })
 }
