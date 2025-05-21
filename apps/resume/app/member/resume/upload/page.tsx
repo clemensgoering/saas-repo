@@ -1,7 +1,7 @@
 import { supabaseServer } from "@supabase/server"
 import { redirect } from "next/navigation"
 
-export default async function MemberPage() {
+export default async function SettingsPage() {
   const supabase = await supabaseServer()
   const {
     data: { user },
@@ -11,7 +11,7 @@ export default async function MemberPage() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto min-h-screen">
-      <h1 className="text-2xl font-bold mb-6">Willkommen zurück, {user.email}!</h1>
+      <h1 className="text-2xl font-bold mb-6">Resume Uploads für, {user.email}!</h1>
       {/* Upload-Formular folgt hier */}
     </div>
   )

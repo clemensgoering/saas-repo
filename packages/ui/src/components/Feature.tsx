@@ -1,11 +1,7 @@
 import Image from 'next/image'
+import { FeatureItem } from "@data/features"
 
-interface FeatureConfig {
-    main_title: string;
-    main_description: string;
-}
-
-const FeatureImage = ({ config }: { config: FeatureConfig }) => {
+const FeatureImage = ({ features }: { features: FeatureItem[] }) => {
 
     return (
         <div className="overflow-hidden bg-background dark:bg-slate-900 py-48">
@@ -16,36 +12,6 @@ const FeatureImage = ({ config }: { config: FeatureConfig }) => {
                             <h2 className="text-base/7 font-semibold light:text-indigo-600">Deploy faster</h2>
                             <p className="mt-2 text-4xl font-semibold tracking-tight text-pretty light:text-gray-900 sm:text-5xl">A better workflow</p>
                             <p className="mt-6 text-lg/8 light:text-gray-600">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.</p>
-                            <dl className="mt-10 max-w-xl space-y-8 text-base/7 light:text-gray-600 lg:max-w-none">
-                                <div className="relative pl-9">
-                                    <dt className="inline font-semibold light:text-gray-900">
-                                        <svg className="absolute top-1 left-1 size-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                            <path fill-rule="evenodd" d="M5.5 17a4.5 4.5 0 0 1-1.44-8.765 4.5 4.5 0 0 1 8.302-3.046 3.5 3.5 0 0 1 4.504 4.272A4 4 0 0 1 15 17H5.5Zm3.75-2.75a.75.75 0 0 0 1.5 0V9.66l1.95 2.1a.75.75 0 1 0 1.1-1.02l-3.25-3.5a.75.75 0 0 0-1.1 0l-3.25 3.5a.75.75 0 1 0 1.1 1.02l1.95-2.1v4.59Z" clip-rule="evenodd" />
-                                        </svg>
-                                        Push to deploy.
-                                    </dt>
-                                    <dd className="inline">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.</dd>
-                                </div>
-                                <div className="relative pl-9">
-                                    <dt className="inline font-semibold light:text-gray-900">
-                                        <svg className="absolute top-1 left-1 size-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                            <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" />
-                                        </svg>
-                                        SSL certificates.
-                                    </dt>
-                                    <dd className="inline">Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.</dd>
-                                </div>
-                                <div className="relative pl-9">
-                                    <dt className="inline font-semibold light:text-gray-900">
-                                        <svg className="absolute top-1 left-1 size-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                            <path d="M4.632 3.533A2 2 0 0 1 6.577 2h6.846a2 2 0 0 1 1.945 1.533l1.976 8.234A3.489 3.489 0 0 0 16 11.5H4c-.476 0-.93.095-1.344.267l1.976-8.234Z" />
-                                            <path fill-rule="evenodd" d="M4 13a2 2 0 1 0 0 4h12a2 2 0 1 0 0-4H4Zm11.24 2a.75.75 0 0 1 .75-.75H16a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75h-.01a.75.75 0 0 1-.75-.75V15Zm-2.25-.75a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75H13a.75.75 0 0 0 .75-.75V15a.75.75 0 0 0-.75-.75h-.01Z" clip-rule="evenodd" />
-                                        </svg>
-                                        Database backups.
-                                    </dt>
-                                    <dd className="inline">Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.</dd>
-                                </div>
-                            </dl>
                         </div>
                     </div>
                     <div className="sm:px-6 lg:px-0">
@@ -65,6 +31,19 @@ const FeatureImage = ({ config }: { config: FeatureConfig }) => {
                             </div>
                             <div className="pointer-events-none absolute inset-0 ring-1 ring-black/10 ring-inset sm:rounded-3xl" aria-hidden="true"></div>
                         </div>
+                    </div>
+                </div>
+                <div className="mx-auto max-w-7xl py-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-16">
+                    {features.map((feature, index) => (
+                        <div className="relative lg:py-8" key={index}>
+                            <dt className="inline font-semibold light:text-gray-900">
+                                {feature.icon}
+                                {feature.title}
+                            </dt>
+                            <dd className="inline">{feature.description}</dd>
+                        </div>
+                    ))}
                     </div>
                 </div>
             </div>
