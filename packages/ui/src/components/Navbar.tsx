@@ -1,47 +1,13 @@
-// components/Navbar.tsx
 "use client"
 
 import ThemeToggler from "../system/ThemeToggler"
 import { ChevronDownIcon, User } from 'lucide-react'
 import Link from "next/link"
 import { useSession } from "@supabase/auth-helpers-react"
-import { supabase } from "../../../supabase/supabase"
-import { useRouter } from "next/navigation"
+import { supabase } from "@supabase/supabase"
 
 
-function UserResumeDropDown() {
-  const router = useRouter()
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const path = e.target.value
-    if (path) {
-      router.push(path)
-    }
-  }
-
-  return (
-    <div className="flex">
-      <div className="grid grid-cols-1">
-        <select
-          onChange={handleChange}
-          id="resumeSelection"
-          name="resumeSelection"
-          className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-        >
-          <option value="/member/resume/upload">Upload</option>
-          <option value="/member/resume/overview">Overview</option>
-        </select>
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-        />
-      </div>
-    </div>
-  )
-}
-
-
-
-export default function Navbar() {
+export default function Navbar({ actions }: { actions?: React.ReactNode }) {
   const session = useSession()
 
   const handleLogout = async () => {
@@ -67,7 +33,7 @@ export default function Navbar() {
           </div>
           <div className="flex flex-1">
             <div className="flex shrink-0 items-center">
-              <a className="block text-teal-600 dark:text-teal-600" href="/">
+              <a className="block text-indigo-600" href="/">
                 <span className="sr-only">Home</span>
                 <svg className="h-8" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -77,29 +43,21 @@ export default function Navbar() {
                 </svg>
               </a>
             </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <a href="#" className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">Team</a>
-              <a href="#" className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">Projects</a>
-              <a href="#" className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">Calendar</a>
-            </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {session ? (
                 <>
-                  <UserResumeDropDown />
-                  <Link href="/member/settings" className="rounded-full py-2.5 text-sm font-medium">
-                    Settings
-                  </Link>
+                  {actions}
                   <button
                     onClick={handleLogout}
-                    className="rounded-full bg-teal-600 px-5 py-1.5 text-sm font-medium text-white shadow-sm dark:hover:bg-teal-500e"
+                    className="rounded-full bg-indigo-600 px-5 py-1.5 text-sm font-medium text-white shadow-sm dark:hover:bg-teal-500e"
                   >
                     Logout
                   </button>
                 </>
               ) : (
-                <Link href="/login" className="rounded-full bg-teal-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm dark:hover:bg-teal-500">
+                <Link href="/login" className="rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm dark:hover:bg-teal-500">
                   Login
                 </Link>
               )}

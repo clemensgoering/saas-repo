@@ -7,6 +7,21 @@ export function ResumeUploader() {
   const [file, setFile] = useState<File | null>(null)
   const [status, setStatus] = useState("")
 
+  const allowedTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain", "text/rtf"]
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0] || null
+    console.log(selected?.type)
+    if (selected && !allowedTypes.includes(selected.type)) {
+      setStatus("Nur PDF, DOCX, RTF oder TXT-Dateien sind erlaubt.")
+      setFile(null)
+      return
+    }
+    setFile(selected)
+    setStatus("")
+  }
+
+
   const handleUpload = async () => {
     if (!file) return
     setStatus("Wird hochgeladen …")
@@ -14,7 +29,7 @@ export function ResumeUploader() {
     const formData = new FormData()
     formData.append("resume", file)
 
-    const res = await fetch("../../api/resume/upload", {
+    const res = await fetch("/api/resume/upload", {
       method: "POST",
       body: formData,
     })
@@ -29,7 +44,7 @@ export function ResumeUploader() {
 
   return (
 
-    <div className="bg-white shadow-sm sm:rounded-lg">
+    <div className="bg-white">
       <div className="px-4 py-5 sm:p-6">
         <h3 className="text-base font-semibold text-gray-900">Upload your Resume</h3>
         <div className="mt-2 max-w-xl text-sm text-gray-500">
@@ -38,13 +53,14 @@ export function ResumeUploader() {
         <div className="mt-5 sm:flex sm:items-center">
           <div className="w-full">
             <input
-              id="pdf"
-              name="pdf"
-              placeholder="file.pdf"
+              id="file"
+              name="file"
+              placeholder="file.*"
               aria-label="File"
+              accept=".pdf,.docx,.txt,.rtf"
+              onChange={handleFileChange}
               ref={inputRef}
               type="file"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
               className="block w-full rounded-md bg-slate-200 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             />
           </div>

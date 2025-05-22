@@ -14,10 +14,13 @@ export function AnalyzeButton({ id }: { id: string }) {
 
     try {
       const res = await fetch(`/api/resume/analyze?id=${id}`, { method: "POST" })
-
+      let errorMsg = `Analyse fehlgeschlagen (Status ${res.status})`
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.error || `Analyse fehlgeschlagen (Status ${res.status})`)
+        const data = await res.clone().json()
+      if (data?.error) {
+        errorMsg = data.error
+      }
+        throw new Error(data.error || errorMsg )
       }
 
       router.refresh()

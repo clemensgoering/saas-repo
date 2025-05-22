@@ -2,8 +2,8 @@ import { Sparkles, Upload, FileText, Languages, ShieldCheck, Volume2 } from "luc
 
 
 import { HeroWhite } from "@repo/components/Hero"
-import { ContentWhite } from "@repo/components/Content"
-import { FeatureImage } from "@repo/components/Feature"
+import { ContentImage, ContentWhite } from "@repo/components/Content"
+import { FeatureImage, FeatureText } from "@repo/components/Feature"
 import { PricingSingle } from "@repo/components/Pricing"
 import { FAQ } from "@repo/components/FAQ"
 import { FeatureItem } from "@data/features"
@@ -72,10 +72,10 @@ export default function Home() {
 
     return (
         <>
-            <HeroWhite config={heroConfig} />
-            <ContentWhite config={contentConfig} />
-            <FeatureImage features={featuresData} />
-            <PricingSingle config={pricingConfig} />
+            <HeroWhite animate props={heroConfig} />
+            <ContentImage animate props={contentConfig} />
+            <FeatureText animate features={featuresData} />
+            <PricingSingle animate props={pricingConfig} />
             <FAQ config={faqConfig} />
         </>
     );

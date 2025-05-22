@@ -6,6 +6,7 @@ import ThemeProvider from "@repo/system/ThemeProvider"
 
 import type { Metadata } from "next";
 import "./globals.css";
+import { UserNavbar } from "./components/UserNavbar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           disableTransitionOnChange
         >
           <AuthProvider>
-            <Navbar />
+            <Navbar actions={<UserNavbar />}/>
             <main className="bg-background">{children}</main>
             <Footer />
           </AuthProvider>

@@ -1,6 +1,6 @@
 import { supabaseServer } from "@supabase/server"
 import { redirect } from "next/navigation"
-import { AnalyzeButton } from "@repo/components/ui/AnalyzeButton"
+import { AnalyzeButton } from "../../../components/AnalyzeButton"
 
 export default async function ResumeDetailPage({ params }: { params: { id: string } }) {
   const supabase = await supabaseServer()

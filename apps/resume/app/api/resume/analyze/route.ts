@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { supabaseServer } from "@supabase/server"
+import { getDocument, GlobalWorkerOptions } from "pdfjs-dist"
 import OpenAI from "openai"
-import pdfParse from "pdf-parse"
+
+GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
 
@@ -23,57 +25,63 @@ export async function POST(req: NextRequest) {
   }
 
   const { data: resume, error } = await supabase
-    .from("Resumes")
+    .from("resumes")
     .select("*")
-    .eq("file_id", resumeId)
+    .eq("id", resumeId)
     .eq("user_id", user.id)
     .single()
 
   if (error || !resume) {
-    console.log(error);
     return NextResponse.json({ error: "Resume not found" }, { status: 404 })
   }
 
-  // Datei laden (lokales Beispiel – bei Supabase Storage hier ersetzen)
-const { data: fileData, error: fileError } = await supabase.storage
-  .from("resumes")
-  .download(resumeId)
+  const { data: fileData, error: fileError } = await supabase.storage
+    .from("resumes")
+    .download(resume.file_name)
 
-if (fileError || !fileData) {
-  return NextResponse.json({ error: "Datei konnte nicht geladen werden." }, { status: 500 })
-}
+  if (fileError || !fileData) {
+    return NextResponse.json({ error: "Datei konnte nicht geladen werden." }, { status: 500 })
+  }
 
-const buffer = await fileData.arrayBuffer()
-const text = (await pdfParse(Buffer.from(buffer))).text
+  const buffer = await fileData.arrayBuffer()
+  const pdf = await getDocument({ data: buffer }).promise
 
-  // GPT-Analyse starten
+  let text = ""
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i)
+    const content = await page.getTextContent()
+    text += content.items.map((item: any) => item.str).join(" ") + "\n"
+  }
+
+  if (!text || text.trim().length < 100) {
+    return NextResponse.json({ error: "Text konnte nicht extrahiert werden." }, { status: 422 })
+  }
+
   const gptResponse = await openai.chat.completions.create({
     model: "gpt-4",
     messages: [
       {
         role: "system",
-        content: "Du bist ein Karriereberater. Analysiere den Lebenslauf, erkenne Stärken, Schwächen und gib Verbesserungen.",
+        content: "Du bist ein Karriereberater. Analysiere den Lebenslauf, erkenne Stärken, Schwächen und gib Verbesserungsvorschläge.",
       },
       {
         role: "user",
-        content: `Hier ist der Lebenslauf:\n\n${text}`,
+        content: `Hier ist ein Lebenslauf:\n\n${text}`,
       },
     ],
   })
 
-const choice = gptResponse.choices?.[0]
-console.log(choice);
-if (!choice || !choice.message?.content) {
-  return NextResponse.json({ error: "GPT-Antwort ungültig." }, { status: 500 })
-}
+  const analysis = gptResponse.choices?.[0]?.message?.content ?? null
 
-const analysis = choice.message.content
-  // Ergebnis speichern
+  if (!analysis) {
+    return NextResponse.json({ error: "Analyse fehlgeschlagen." }, { status: 500 })
+  }
+
   await supabase
-    .from("Analysis")
+    .from("resumes")
     .update({ analysis })
-    .eq("user_id", resume.id)
-    .eq("file_id", user.id)
+    .eq("id", resume.id)
 
   return NextResponse.json({ success: true, analysis })
 }
+
