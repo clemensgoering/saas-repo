@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { supabaseServer } from "@supabase/server"
 import OpenAI from "openai"
-import { extractTextFromPdfBuffer } from "../../../components/ResumeLoader";
+import { extractTextFromPdfBuffer } from "../../../components/resume/ResumeLoader";
+import { logWalletAction } from "../../../utils/log-wallet";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
 
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
   if (fileError || !fileData) {
     return NextResponse.json({ error: "Datei konnte nicht geladen werden." }, { status: 500 })
   }
-  
+
   const buffer = Buffer.from(await fileData.arrayBuffer())
   const text = await extractTextFromPdfBuffer(buffer)
 
@@ -61,17 +62,31 @@ export async function POST(req: NextRequest) {
   const analysis = gptResponse.choices?.[0]?.message?.content ?? null
   if (!analysis) {
     return NextResponse.json({ error: "Analyse fehlgeschlagen." }, { status: 500 })
-  } 
+  }
 
-const { data, error: analysisError } = await supabase
-  .from('Analysis')
-  .upsert({ user_id: user.id, 
-            file_id: resumeId, 
-            analysis: analysis, 
-            created_at: new Date().toISOString() })
-  
+  const { data, error: analysisError } = await supabase
+    .from('Analysis')
+    .upsert({
+      user_id: user.id,
+      file_id: resumeId,
+      analysis: analysis,
+      created_at: new Date().toISOString()
+    })
+
   if (analysisError) {
     return NextResponse.json({ error: analysisError.message }, { status: 500 })
+  }
+
+  const { error: walletError } = await logWalletAction({
+    userId: user.id,
+    type: "use",
+    coins: -5,
+    source: "question",
+    description: "Frage zur Lebenslaufanalyse",
+  })
+
+  if (walletError) {
+    return NextResponse.json({ error: walletError.message }, { status: 500 })
   }
 
   return NextResponse.json({ success: true, text })

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { supabaseServer } from "@supabase/server"
 import OpenAI from "openai"
-import { extractTextFromPdfBuffer } from "../../../components/ResumeLoader"
+import { extractTextFromPdfBuffer } from "../../../components/resume/ResumeLoader"
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
 

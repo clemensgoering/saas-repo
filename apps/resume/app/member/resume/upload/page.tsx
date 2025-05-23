@@ -1,6 +1,6 @@
 import { supabaseServer } from "@supabase/server"
 import { redirect } from "next/navigation"
-import { ResumeUploader } from "../../../components/ResumeUploader"
+import { ResumeUploader } from "../../../components/resume/ResumeUploader"
 import { Incentives } from "@repo/components/Incentives"
 import { FAQ } from "@repo/components/FAQ"
 import { SectionHeader } from "@repo/components/SectionHeader"

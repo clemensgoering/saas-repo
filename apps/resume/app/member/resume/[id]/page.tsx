@@ -1,8 +1,10 @@
 import { supabaseServer } from "@supabase/server"
 import { redirect } from "next/navigation"
-import { AnalyzeButton } from "../../../components/AnalyzeButton"
 import { SectionHeader } from "@repo/components/SectionHeader"
-import { ResumeQuestion } from "../../../components/ResumeQuestion"
+import { ResumeQuestion } from "../../../components/resume/ResumeQuestion"
+import { cn } from "@lib/utils"
+import { FeedbackList } from "../../../components/resume/FeedbackList"
+
 
 export default async function ResumeDetailPage({ params }: { params: { id: string } }) {
   const supabase = await supabaseServer()
@@ -71,30 +73,7 @@ export default async function ResumeDetailPage({ params }: { params: { id: strin
         </div>
       </div>
       {/* Abschnitt fuer Feedback */}
-      <div className="grid grid-cols-1 items-start gap-4">
-        <section className="mt-10">
-          <h3 className="text-lg font-semibold mb-4">Bisherige Fragen & Antworten</h3>
-
-          {feedback?.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Noch keine Fragen gestellt.</p>
-          ) : (
-            <ul className="space-y-4 border rounded-md p-4 bg-muted/10">
-              {feedback?.map((item, index) => (
-                <li key={index} className="text-sm">
-                  <p className="font-medium text-foreground">Frage:</p>
-                  <p className="mb-2">{item.question}</p>
-                  <p className="font-medium text-foreground">Antwort:</p>
-                  <p className="text-muted-foreground whitespace-pre-wrap">{item.answer}</p>
-                  <p className="mt-1 text-xs text-gray-500">
-                    gestellt am {new Date(item.created_at).toLocaleString("de-DE")}
-                  </p>
-                  {index < feedback.length - 1 && <hr className="mt-4 border-muted" />}
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </div>
+      <FeedbackList items={feedback}/>
     </div>
 
   )

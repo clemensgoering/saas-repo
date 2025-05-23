@@ -18,10 +18,10 @@ const FAQ = ({ config }: { config?: FAQConfig }) => {
                                 <button type="button" className="flex w-full items-start justify-between text-left light:text-gray-900" aria-controls="faq-0" aria-expanded="false">
                                     <span className="text-base/7 font-semibold">What&#039;s the best thing about Switzerland?</span>
                                     <span className="ml-6 flex h-7 items-center">
-                                        <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+                                        <svg className="size-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                                         </svg>
-                                        <svg className="hidden size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+                                        <svg className="hidden size-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
                                         </svg>
                                     </span>

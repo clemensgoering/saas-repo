@@ -2,7 +2,7 @@
 
 import { SetStateAction, useState } from "react"
 import { Textarea } from "@repo/components/ui/Textarea"
-import { LicenseGate } from "./license/LicenseGate"
+import { LicenseGate } from "../license/LicenseGate"
 
 export function ResumeQuestion({ userId, resumeId }: { userId: string, resumeId: string }) {
     const [question, setQuestion] = useState("")

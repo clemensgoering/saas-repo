@@ -6,7 +6,7 @@ import ThemeProvider from "@repo/system/ThemeProvider"
 
 import type { Metadata } from "next";
 import "./globals.css";
-import { UserNavbar } from "./components/UserNavbar";
+import { UserNavbar } from "./components/ui/UserNavbar";
 import {  UserCoinStatusIcon } from "./components/license/UserCoinStatus";
 
 export const metadata: Metadata = {

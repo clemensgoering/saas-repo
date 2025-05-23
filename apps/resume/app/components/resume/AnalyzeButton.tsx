@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { LicenseGate } from "./license/LicenseGate"
+import { LicenseGate } from "../license/LicenseGate"
 
 export function AnalyzeButton({ userId, resumeId }: { userId: string, resumeId: string }) {
   const [label, setLabel] = useState("Jetzt Analysieren")

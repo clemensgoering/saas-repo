@@ -6,6 +6,7 @@
   color-scheme: light dark;
 }
 
+
 body {
   background-color: light-dark(#e3e3e342, rgb(15 23 42 / var(--tw-bg-opacity, 1)));
   color: light-dark(#000, #fff);
