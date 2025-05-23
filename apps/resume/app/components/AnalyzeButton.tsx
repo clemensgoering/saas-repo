@@ -2,25 +2,26 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { LicenseGate } from "./license/LicenseGate"
 
-export function AnalyzeButton({ id }: { id: string }) {
-  const [loading, setLoading] = useState(false)
+export function AnalyzeButton({ userId, resumeId }: { userId: string, resumeId: string }) {
+  const [label, setLabel] = useState("Jetzt Analysieren")
   const [error, setError] = useState("")
   const router = useRouter()
 
   const startAnalysis = async () => {
-    setLoading(true)
+    setLabel("Wird analysisert..")
     setError("")
 
     try {
-      const res = await fetch(`/api/resume/analyze?id=${id}`, { method: "POST" })
+      const res = await fetch(`/api/resume/analyze?id=${resumeId}`, { method: "POST" })
       let errorMsg = `Analyse fehlgeschlagen (Status ${res.status})`
       if (!res.ok) {
         const data = await res.clone().json()
-      if (data?.error) {
-        errorMsg = data.error
-      }
-        throw new Error(data.error || errorMsg )
+        if (data?.error) {
+          errorMsg = data.error
+        }
+        throw new Error(data.error || errorMsg)
       }
 
       router.refresh()
@@ -28,20 +29,19 @@ export function AnalyzeButton({ id }: { id: string }) {
       console.error("Analyse-Fehler:", err)
       setError(err.message || "Unbekannter Fehler bei der Analyse.")
     } finally {
-      setLoading(false)
+      setLabel("Jetzt Analysieren")
     }
   }
 
   return (
     <div className="space-y-1">
-      <button
-        onClick={startAnalysis}
-        disabled={loading}
+      <LicenseGate
+        userId={userId}
+        cost={5}
+        label={label}
+        onExecute={startAnalysis}
         className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-      >
-        {loading ? "Analysiere…" : "Jetzt analysieren"}
-      </button>
-
+      />
       {error && (
         <p className="text-xs text-red-500">{error}</p>
       )}

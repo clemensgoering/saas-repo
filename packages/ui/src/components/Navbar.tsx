@@ -7,7 +7,7 @@ import { useSession } from "@supabase/auth-helpers-react"
 import { supabase } from "@supabase/supabase"
 
 
-export default function Navbar({ actions }: { actions?: React.ReactNode }) {
+export default function Navbar({ actions, userCoins }: { actions?: React.ReactNode, userCoins?: React.ReactNode }) {
   const session = useSession()
 
   const handleLogout = async () => {
@@ -62,6 +62,7 @@ export default function Navbar({ actions }: { actions?: React.ReactNode }) {
                 </Link>
               )}
               <ThemeToggler />
+              {userCoins}
             </div>
           </div>
         </div>

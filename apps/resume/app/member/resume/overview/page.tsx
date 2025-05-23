@@ -14,9 +14,17 @@ export default async function SettingsPage() {
 
     if (!user) redirect("/login")
 
+
     const { data: resumes, error } = await supabase
         .from("Resumes")
-        .select("*")
+        .select(`user_id,
+                file_id,
+                file_name,
+                created_at,
+                Analysis (
+                    file_id
+                )
+            `)
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
 
@@ -49,7 +57,7 @@ export default async function SettingsPage() {
                                                     Created At
                                                 </th>
                                                 <th scope="col" className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                                    Analyzed
+                                                    Review
                                                 </th>
                                                 <th scope="col" className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                                                     Process
@@ -81,8 +89,8 @@ export default async function SettingsPage() {
                                                             'px-3 py-3.5 text-sm text-gray-500 lg:table-cell',
                                                         )}
                                                     >
-                                                        {resume.analysis ? (
-                                                            <Link href={`/member/resume/${resume.id}`} className="rounded-full py-2.5 text-sm font-medium">
+                                                        {resume.Analysis ? (
+                                                            <Link href={`/member/resume/${resume.file_id}`} className="rounded-full py-2.5 text-sm font-medium">
                                                                 Details
                                                             </Link>
                                                         ) : ("")}
@@ -93,7 +101,7 @@ export default async function SettingsPage() {
                                                             'relative py-3.5 pl-3 text-sm font-medium sm:pr-6',
                                                         )}
                                                     >
-                                                        <AnalyzeButton id={resume.file_id} />
+                                                        <AnalyzeButton userId={user.id} resumeId={resume.file_id} />
                                                         {index !== 0 ? <div className="absolute -top-px right-6 left-0 h-px bg-gray-200" /> : null}
                                                     </td>
                                                 </tr>

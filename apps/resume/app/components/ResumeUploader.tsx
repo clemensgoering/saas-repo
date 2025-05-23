@@ -7,7 +7,7 @@ export function ResumeUploader() {
   const [file, setFile] = useState<File | null>(null)
   const [status, setStatus] = useState("")
 
-  const allowedTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain", "text/rtf"]
+  const allowedTypes = ["application/pdf"]
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null
@@ -57,7 +57,7 @@ export function ResumeUploader() {
               name="file"
               placeholder="file.*"
               aria-label="File"
-              accept=".pdf,.docx,.txt,.rtf"
+              accept=".pdf"
               onChange={handleFileChange}
               ref={inputRef}
               type="file"

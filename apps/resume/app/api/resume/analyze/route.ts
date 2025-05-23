@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { supabaseServer } from "@supabase/server"
-import { getDocument, GlobalWorkerOptions } from "pdfjs-dist"
 import OpenAI from "openai"
-
-GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`
+import { extractTextFromPdfBuffer } from "../../../components/ResumeLoader";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
 
@@ -25,37 +23,26 @@ export async function POST(req: NextRequest) {
   }
 
   const { data: resume, error } = await supabase
-    .from("resumes")
+    .from("Resumes")
     .select("*")
-    .eq("id", resumeId)
+    .eq("file_id", resumeId)
     .eq("user_id", user.id)
     .single()
 
   if (error || !resume) {
-    return NextResponse.json({ error: "Resume not found" }, { status: 404 })
+    return NextResponse.json({ error: error?.message }, { status: 404 })
   }
 
   const { data: fileData, error: fileError } = await supabase.storage
     .from("resumes")
-    .download(resume.file_name)
+    .download(resume.file_id)
 
   if (fileError || !fileData) {
     return NextResponse.json({ error: "Datei konnte nicht geladen werden." }, { status: 500 })
   }
-
-  const buffer = await fileData.arrayBuffer()
-  const pdf = await getDocument({ data: buffer }).promise
-
-  let text = ""
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i)
-    const content = await page.getTextContent()
-    text += content.items.map((item: any) => item.str).join(" ") + "\n"
-  }
-
-  if (!text || text.trim().length < 100) {
-    return NextResponse.json({ error: "Text konnte nicht extrahiert werden." }, { status: 422 })
-  }
+  
+  const buffer = Buffer.from(await fileData.arrayBuffer())
+  const text = await extractTextFromPdfBuffer(buffer)
 
   const gptResponse = await openai.chat.completions.create({
     model: "gpt-4",
@@ -72,16 +59,21 @@ export async function POST(req: NextRequest) {
   })
 
   const analysis = gptResponse.choices?.[0]?.message?.content ?? null
-
   if (!analysis) {
     return NextResponse.json({ error: "Analyse fehlgeschlagen." }, { status: 500 })
+  } 
+
+const { data, error: analysisError } = await supabase
+  .from('Analysis')
+  .upsert({ user_id: user.id, 
+            file_id: resumeId, 
+            analysis: analysis, 
+            created_at: new Date().toISOString() })
+  
+  if (analysisError) {
+    return NextResponse.json({ error: analysisError.message }, { status: 500 })
   }
 
-  await supabase
-    .from("resumes")
-    .update({ analysis })
-    .eq("id", resume.id)
-
-  return NextResponse.json({ success: true, analysis })
+  return NextResponse.json({ success: true, text })
 }
 
