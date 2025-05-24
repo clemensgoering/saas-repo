@@ -2,6 +2,10 @@
 
 import { cn } from '../lib/utils';
 import { motion } from "framer-motion"
+import { PlusIcon } from '@heroicons/react/16/solid'
+import { PricingBlock } from "@data/pricing"
+import Link from 'next/link';
+
 
 interface PricingConfig {
     main_title: string;
@@ -9,7 +13,7 @@ interface PricingConfig {
     className: string;
 }
 
-const PricingSingle = ({ animate , props }: { animate?: boolean, props: PricingConfig }) => {
+const PricingSingle = ({ animate, props }: { animate?: boolean, props: PricingConfig }) => {
     const Wrapper = animate ? motion.section : "section"
     return (
         <Wrapper
@@ -82,8 +86,86 @@ const PricingSingle = ({ animate , props }: { animate?: boolean, props: PricingC
     );
 };
 
+
+const PricingBlocks = ({ tiers }: { tiers: PricingBlock[] }) => {
+
+    const handleBuy = async (amount: number) => {
+        const res = await fetch("/api/stripe/checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ quantity: amount }),
+        })
+
+        const { url } = await res.json()
+        if (url) window.location.href = url
+    }
+
+
+    return (
+
+        <div className="relative pt-16 sm:pt-14">
+            <div className="inset-x-0 top-48 bottom-0" />
+            <div className="relative mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
+                <div className="grid grid-cols-1 gap-10 lg:grid-cols-3 mb-6">
+                    {tiers.map((tier, index) => (
+                        <div
+                            key={index}
+                            className="my-4 grid grid-cols-1 shadow-[inset_0_0_2px_1px_#ffffff4d] rounded-lg ring-1 ring-black/5 max-lg:mx-auto max-lg:w-full max-lg:max-w-md"
+                        >
+                            <div className="grid grid-cols-1 p-2 shadow-md shadow-black/5">
+                                <div className="rounded-lg bg-white p-10 pb-9 shadow-2xl ring-1 ring-black/5">
+                                    <h2 className="text-sm font-semibold text-indigo-600">
+                                        {tier.name} <span className="sr-only">plan</span>
+                                    </h2>
+                                    <p className="mt-2 text-sm/6 text-pretty text-gray-600">{tier.description}</p>
+                                    <div className="mt-8 flex items-center gap-4">
+                                        <div className="text-5xl font-semibold text-gray-950">{tier.amount} </div>
+                                        <div className="text-2xl text-gray-600">
+                                            <p>{tier.currency}</p>
+                                        </div>
+                                    </div>
+                                    <div className="mt-8">
+                                        <button
+                                            key={tier.amount} onClick={() => handleBuy(tier.amount/5)}
+                                            aria-label={`Start a free trial on the ${tier.name} plan`}
+                                            className="w-full inline-block rounded-md bg-indigo-400 px-3.5 py-2 text-center text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                        >
+                                            Order now
+                                        </button>
+                                    </div>
+                                    <div className="mt-8">
+                                        <h3 className="text-sm/6 font-medium text-gray-950">Why this would be for you:</h3>
+                                        <ul className="mt-3 space-y-3">
+                                            {tier.features.map((feature, index) => (
+                                                <li
+                                                    key={index}
+                                                    className="group flex items-start gap-4 text-sm/6 text-gray-600 data-disabled:text-gray-400"
+                                                >
+                                                    <span className="inline-flex h-6 items-center">
+                                                        <PlusIcon
+                                                            aria-hidden="true"
+                                                            className="size-4 fill-gray-400 group-data-disabled:fill-gray-300"
+                                                        />
+                                                    </span>
+                                                    {feature.description}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+
 export {
-    PricingSingle
+    PricingSingle,
+    PricingBlocks
 }
 
 

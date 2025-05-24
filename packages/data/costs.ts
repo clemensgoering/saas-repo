@@ -1,7 +1,7 @@
 export type CostItem = {
   id: number
   name: string
-  status: string
+  status: "Extended" | "Default"
   description: string
   costs:number
 }

@@ -1,15 +1,19 @@
 
 import { cn } from '@lib/utils'
 
-const statuses = {
-  Extended: 'text-green-700 bg-green-50 ring-green-600/20',
-  Default: 'text-gray-600 bg-gray-50 ring-gray-500/10',
+interface CostContainer {
+ [key: string]: string | undefined; // Define index property with string keys and string values
 }
+const CostStatus: CostContainer = {
+    Extended: 'text-green-700 bg-green-50 ring-green-600/20',
+    Default: 'text-gray-600 bg-gray-50 ring-gray-500/10',
+};
+
 const CostItems = [
   {
     id: 1,
     name: 'Analyze PDF File',
-    status: 'Extended',
+    status: "Extended",
     description: 'Analyzing uploaded PDF files',
     costs: 5
   },
@@ -22,7 +26,7 @@ const CostItems = [
   },
 ]
 
-export default function Example() {
+export default function CostList() {
   return (
     <>
       <div className="border-b border-gray-200 pb-5">
@@ -36,8 +40,8 @@ export default function Example() {
                 <p className="text-sm/6 font-semibold text-gray-900">{costs.name}</p>
                 <p
                   className={cn(
-                    statuses[costs.status],
-                    'mt-0.5 rounded-md px-1.5 py-0.5 text-xs font-medium whitespace-nowrap ring-1 ring-inset',
+                    CostStatus[costs.status],
+                    'text-green-700 bg-green-50 ring-green-600/20mt-0.5 rounded-md px-1.5 py-0.5 text-xs font-medium whitespace-nowrap ring-1 ring-inset',
                   )}
                 >
                   {costs.status}

@@ -6,6 +6,53 @@ import { CoinHistoryList } from "../../components/license/CoinHistoryList"
 import CostList from "../../components/license/CostList"
 import SettingsHeader from "../../components/settings/SettingsHeader"
 import { UserSettings } from "../../components/settings/UserSettings"
+import { PricingBlocks } from "@repo/components/Pricing"
+
+const tiers = [
+  {
+    name: 'Starter',
+    description: 'Everything you need to get started.',
+    amount: 2,
+    currency: "€",
+    href: '#',
+    features: [
+      { description: 'Custom domains' },
+      { description: 'Edge content delivery' },
+      { description: 'Advanced analytics' },
+      { description: 'Quarterly workshops', disabled: true },
+      { description: 'Single sign-on (SSO)', disabled: true },
+      { description: 'Priority phone support', disabled: true },
+    ],
+  },
+  {
+    name: 'Extended',
+    description: 'All the extras for your growing team.',
+    amount: 10,
+    currency: "€",
+    features: [
+      { description: 'Custom domains' },
+      { description: 'Edge content delivery' },
+      { description: 'Advanced analytics' },
+      { description: 'Quarterly workshops' },
+      { description: 'Single sign-on (SSO)', disabled: true },
+      { description: 'Priority phone support', disabled: true },
+    ],
+  },
+  {
+    name: 'Power User',
+    description: 'Added flexibility at scale.',
+    amount: 50,
+    currency: "€",
+    features: [
+      { description: 'Custom domains' },
+      { description: 'Edge content delivery' },
+      { description: 'Advanced analytics' },
+      { description: 'Quarterly workshops' },
+      { description: 'Single sign-on (SSO)' },
+      { description: 'Priority phone support' },
+    ],
+  },
+]
 
 export default async function SettingsPage() {
   const supabase = await supabaseServer()
@@ -43,26 +90,39 @@ export default async function SettingsPage() {
           </div>
         </div>
 
-        <div className="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-          {/* Right Side */}
-          <div className="lg:col-start-3 lg:row-end-1">
-            <div className="rounded-lg bg-white shadow-xs ring-1 ring-gray-900/5">
-              <div className="px-6 py-6">
-                <BuyCoins preset={[10, 20, 50]} />
+        {/* buy coins */}
+        <div className="grid grid-cols-1 py-24">
+          <div className="rounded-lg bg-white shadow-xs ring-1 ring-gray-900/5">
+            <div className="px-6 pt-16">
+              <div className="mx-auto max-w-4xl px-6 max-lg:text-center lg:max-w-7xl lg:px-8">
+                <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-950 sm:text-6xl lg:text-pretty">
+                  Pricing that grows with your team size
+                </h1>
+                <p className="mt-6 max-w-2xl text-lg font-medium text-pretty text-gray-600 max-lg:mx-auto sm:text-xl/8">
+                  Choose an affordable plan that’s packed with the best features for engaging your audience, creating customer
+                  loyalty, and driving sales.
+                </p>
+              </div>
+              <PricingBlocks tiers={tiers} />
+            </div>
+          </div>
+        </div>
+
+
+        {/* Coin History */}
+        <div className="grid grid-cols-1">
+          <div className="rounded-lg bg-white shadow-xs ring-1 ring-gray-900/5">
+            <div className="px-6 py-6">
+              <div className="border-b border-gray-200 pb-5">
+                <h3 className="text-base font-semibold text-gray-900">Cost Overview</h3>
+              </div>
+              <div className="pt-6">
+              <CoinHistoryList userId={user.id} />
               </div>
             </div>
           </div>
-
-          {/* Left side */}
-          <div className="py-8 bg-white shadow-xs ring-1 ring-gray-900/5 rounded-lg px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pt-16 xl:pb-20">
-            <h2 className="text-base font-semibold text-gray-900">Coin History</h2>
-            <div className="mt-6 grid grid-cols-1 text-sm/6 sm:grid-cols-2">
-              <CoinHistoryList userId={user.id} />
-            </div>
-          </div>
-
-
         </div>
+
 
         {/* cost list */}
         <div className="grid grid-cols-1 py-12">
@@ -73,6 +133,7 @@ export default async function SettingsPage() {
           </div>
         </div>
       </div>
+
     </>
   )
 }
